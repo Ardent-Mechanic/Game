@@ -1,6 +1,7 @@
 import pygame
 from Constants import *
 from Player import Hero
+from Mob import *
 
 
 class World:
@@ -9,10 +10,12 @@ class World:
         self.background = pygame.image.load(BACK_GROUND[0])
         self.running = True
         self.player = Hero(self.screen)
+        self.mob = Crocodile(self.screen)
 
     def render(self):
         self.screen.blit(self.background, (0, 0))
         self.player.render()
+        self.mob.render()
         pygame.display.flip()
 
     def main_loop(self):
