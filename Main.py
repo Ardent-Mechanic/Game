@@ -12,8 +12,10 @@ class Menu:
         self.background = pygame.Surface((SCREEN_WEIGHT, SCREEN_HEIGHT))
         self.background.fill(pygame.Color((40, 40, 40)))
 
-        self.newgame_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/New Game Button.png"), (150, 70))
-        self.options_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/Options Button.png"), (150, 70))
+        self.newgame_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/New Game Button.png"),
+                                                  (150, 70))
+        self.options_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/Options Button.png"),
+                                                  (150, 70))
         self.exit_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/Exit Button.png"), (150, 70))
 
         self.background.blit(self.newgame_btn, (430, 300))
@@ -57,7 +59,8 @@ class Menu:
 class Cursor(pygame.sprite.Sprite):
     def __init__(self, group):
         super(Cursor, self).__init__(group)
-        self.image = pygame.transform.scale(pygame.image.load("Resources/Main menu/cursor.png").convert_alpha(), (35, 40))
+        self.image = pygame.transform.scale(pygame.image.load("Resources/Main menu/cursor.png").convert_alpha(),
+                                            (35, 40))
         self.rect = self.image.get_rect()
 
     def update(self, coord_):
@@ -76,6 +79,8 @@ class World:
         self.player = Hero(self.screen)
 
         self.mob = Mob(self.screen)
+
+        self.mob_box = [self.mob]
 
     def render(self, com):
         self.screen.blit(self.background, (0, 0))
@@ -102,16 +107,23 @@ class World:
                              (775 + 3 + self.player.mana_point,
                               MANA_BAR_CORDS[1] + 3, MANA - self.player.mana_point, 22))
 
-        if self.mob.health_point <= 0:
-            pygame.draw.rect(self.screen, pygame.Color("white"), (self.mob.x, self.mob.y, 30, 30))
-        else:
-            self.mob.moving()
+        for mob in self.mob_box:
 
-            pygame.draw.rect(self.screen, pygame.Color("Red"), (self.mob.x - 10, self.mob.y - 10, 50, 3))
+            if mob.health_point <= 0:
+                pygame.draw.rect(self.screen, pygame.Color("white"), (mob.x, mob.y, 30, 30))
+            else:
 
-            self.mob.render()
+                if mob.status == "friendly":
+                    mob.moving()
+                else:
+                    mob.moving(self.player.get_player_cords())
+
+                pygame.draw.rect(self.screen, pygame.Color("Red"), (mob.x - 10, mob.y - 10, 50, 3))
+
+                mob.render()
 
     def main_loop(self):
+
         self.player.filling_moves()
 
         while self.running:
@@ -119,6 +131,18 @@ class World:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
+            player_cords = self.player.get_player_cords()
+
+            for mob in self.mob_box:
+                n = mob.line_of_sight
+                x, y = mob.get_mob_cords()
+
+                if x + n >= player_cords[0] >= x - n and y + n >= player_cords[1] >= y - n:
+                    mob.status = "aggressive"
+                else:
+                    if mob.status != "friendly":
+                        mob.status = "friendly"
 
             com = pygame.key.get_pressed()
 
