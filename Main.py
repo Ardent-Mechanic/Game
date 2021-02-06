@@ -85,6 +85,12 @@ class World:
     def render(self, com):
         self.screen.blit(self.background, (0, 0))
 
+        if self.player.health_point != HP:
+            self.player.hp_regen()
+
+        if self.player.mana_point != MANA:
+            self.player.mn_regen()
+
         if self.player.health_point <= 0:
             self.screen.blit(self.player.death_animation, (self.player.x, self.player.y))
         else:
@@ -119,16 +125,7 @@ class World:
                 elif mob.status == "aggressive":
                     x_mob, y_mob = mob.get_mob_cords()
                     x_player, y_player = self.player.get_player_cords()
-
-                    # if x_player + 50 >= x_mob >= x_player - 30 \
-                    #         and y_player + 20 >= y_mob >= y_player - 30:
-                    #     mob.status = "attack"
-                    # else:
                     mob.moving(self.player.get_player_cords())
-
-                # else:
-                #     print("YES")
-                #     self.player.get_damage(10)
 
                 elif mob.status == "attack":
                     self.player.get_damage(10)
@@ -181,6 +178,4 @@ class World:
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WEIGHT, SCREEN_HEIGHT))
-    # player = Hero(screen).filling_moves()
     Menu().main()
-    # World(screen).main_loop()
