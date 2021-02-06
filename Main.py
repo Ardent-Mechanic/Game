@@ -116,6 +116,13 @@ class World:
                 if mob.status == "friendly":
                     mob.moving()
                 else:
+                    x_mob, y_mob = mob.get_mob_cords()
+                    x_player, y_player = self.player.get_player_cords()
+
+                    # if x_player + PLAYER_HITBOX_WEIGHT >= x_mob >= x_player - PLAYER_HITBOX_WEIGHT\
+                    #         and y_player + PLAYER_HITBOX_HEIGHT >= y_mob >= y_player - PLAYER_HITBOX_HEIGHT:
+                    #     mob.status = "attack"
+                    # else:
                     mob.moving(self.player.get_player_cords())
 
                 pygame.draw.rect(self.screen, pygame.Color("Red"), (mob.x - 10, mob.y - 10, 50, 3))

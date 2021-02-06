@@ -74,21 +74,22 @@ class Mob:
 
         else:
 
-            if self.y < player_cords[1]:
+            if self.y - 20 < player_cords[1] - MONSTER_SPEED:
                 self.y += MONSTER_SPEED
                 self.move_choise = "Forward"
 
-            elif self.y > player_cords[1]:
+            elif self.y - 20 > player_cords[1]:
                 self.y -= MONSTER_SPEED
                 self.move_choise = "Back"
 
-            elif self.x < player_cords[0]:
+            elif self.x - 17 < player_cords[0] - MONSTER_SPEED:
                 self.x += MONSTER_SPEED
                 self.move_choise = "Right"
 
-            elif self.x > player_cords[0]:
+            elif self.x - 17 > player_cords[0]:
                 self.x -= MONSTER_SPEED
                 self.move_choise = "Left"
 
             else:
+
                 pass
