@@ -13,12 +13,14 @@ class Menu:
         self.background.fill(pygame.Color((40, 40, 40)))
 
         self.newgame_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/New Game Button.png"), (150, 70))
+        self.levels_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/Levels Button.png"), (150, 70))
         self.options_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/Options Button.png"), (150, 70))
         self.exit_btn = pygame.transform.scale(pygame.image.load("Resources/Main menu/Exit Button.png"), (150, 70))
 
         self.background.blit(self.newgame_btn, (430, 300))
-        self.background.blit(self.options_btn, (430, 400))
-        self.background.blit(self.exit_btn, (430, 500))
+        self.background.blit(self.levels_btn, (430, 400))
+        self.background.blit(self.options_btn, (430, 500))
+        self.background.blit(self.exit_btn, (430, 600))
 
         self.running = True
 
@@ -39,8 +41,10 @@ class Menu:
                         self.running = False
                         World(screen).main_loop()
                     if 430 <= event.pos[0] <= 450 + 150 and 400 <= event.pos[1] <= 400 + 70:
-                        print('2')
+                        print('levels')
                     if 430 <= event.pos[0] <= 450 + 150 and 500 <= event.pos[1] <= 500 + 70:
+                        print('options')
+                    if 430 <= event.pos[0] <= 450 + 150 and 600 <= event.pos[1] <= 600 + 70:
                         self.running = False
                 if key[pygame.K_ESCAPE]:
                     self.running = False
