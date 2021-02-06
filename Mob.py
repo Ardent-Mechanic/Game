@@ -45,11 +45,6 @@ class Mob:
 
         self.animation_counter += 1
 
-    # def chek_active_move(self, skip_key):
-    #     for key in self.active_move.keys():
-    #         if key != skip_key:
-    #             self.active_move[key] = False
-
     def get_mob_cords(self):
         return [self.x, self.y]
 
@@ -72,24 +67,23 @@ class Mob:
             elif self.move_choise == "Left" and self.x > 5:
                 self.x -= MONSTER_SPEED
 
-        else:
+        elif self.status == "aggressive":
 
-            if self.y - 20 < player_cords[1] - MONSTER_SPEED:
+            if self.y < player_cords[1] - MONSTER_SPEED + 20:
                 self.y += MONSTER_SPEED
                 self.move_choise = "Forward"
 
-            elif self.y - 20 > player_cords[1]:
+            elif self.y > player_cords[1] + 20:
                 self.y -= MONSTER_SPEED
                 self.move_choise = "Back"
 
-            elif self.x - 17 < player_cords[0] - MONSTER_SPEED:
+            elif self.x < player_cords[0] - MONSTER_SPEED + 15:
                 self.x += MONSTER_SPEED
                 self.move_choise = "Right"
 
-            elif self.x - 17 > player_cords[0]:
+            elif self.x > player_cords[0] + 15:
                 self.x -= MONSTER_SPEED
                 self.move_choise = "Left"
 
-            else:
 
-                pass
+

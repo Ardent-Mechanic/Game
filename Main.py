@@ -115,15 +115,23 @@ class World:
 
                 if mob.status == "friendly":
                     mob.moving()
-                else:
+
+                elif mob.status == "aggressive":
                     x_mob, y_mob = mob.get_mob_cords()
                     x_player, y_player = self.player.get_player_cords()
 
-                    # if x_player + PLAYER_HITBOX_WEIGHT >= x_mob >= x_player - PLAYER_HITBOX_WEIGHT\
-                    #         and y_player + PLAYER_HITBOX_HEIGHT >= y_mob >= y_player - PLAYER_HITBOX_HEIGHT:
+                    # if x_player + 50 >= x_mob >= x_player - 30 \
+                    #         and y_player + 20 >= y_mob >= y_player - 30:
                     #     mob.status = "attack"
                     # else:
                     mob.moving(self.player.get_player_cords())
+
+                # else:
+                #     print("YES")
+                #     self.player.get_damage(10)
+
+                elif mob.status == "attack":
+                    self.player.get_damage(10)
 
                 pygame.draw.rect(self.screen, pygame.Color("Red"), (mob.x - 10, mob.y - 10, 50, 3))
 
@@ -139,14 +147,19 @@ class World:
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            player_cords = self.player.get_player_cords()
+            x_player, y_player = player_cords = self.player.get_player_cords()
 
             for mob in self.mob_box:
                 n = mob.line_of_sight
-                x, y = mob.get_mob_cords()
+                x_mob, y_mob = mob.get_mob_cords()
 
-                if x + n >= player_cords[0] >= x - n and y + n >= player_cords[1] >= y - n:
+                if x_player + 50 >= x_mob >= x_player - 30 \
+                        and y_player + 20 >= y_mob >= y_player - 30:
+                    mob.status = "attack"
+
+                elif x_mob + n >= player_cords[0] >= x_mob - n and y_mob + n >= player_cords[1] >= y_mob - n:
                     mob.status = "aggressive"
+
                 else:
                     if mob.status != "friendly":
                         mob.status = "friendly"
