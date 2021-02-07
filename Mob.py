@@ -16,12 +16,16 @@ class Mob:
         self.active_move = {"Forward": False, "Back": False, "Right": False, "Left": False}
         self.move_choise = random.choice(["Forward", "Back", "Right", "Left"])
 
+        self.damage = 20
+
         self.x = 500
         self.y = 200
 
         self.line_of_sight = MONSTER_LINE_OF_SIGHT
 
         self.animation_counter = MAX_FRAMES_FOR_IMAGE
+
+        self.damage_counter = 10
 
         # image = pygame.image.load(self.image_pack[0]).convert_alpha()
         #
@@ -48,8 +52,11 @@ class Mob:
     def get_mob_cords(self):
         return [self.x, self.y]
 
-    def get_damage(self, damage):
-        self.health_point -= damage
+    # def get_damage(self, damage):
+    #     self.health_point -= damage
+
+    def give_damage(self, player):
+        player.health_point -= self.damage
 
     def moving(self, player_cords=None):
 

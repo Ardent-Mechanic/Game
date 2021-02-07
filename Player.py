@@ -103,19 +103,19 @@ class Hero:
     def get_damage(self, damage):
         self.health_point -= damage
 
-    def search_target(self, side):
-        cords = []
-
-        if side == "Forward":
-            cords = [self.x, self.y + 60, 50, 20]
-        elif side == "Back":
-            cords = [self.x, self.y - 5, 50, 20]
-        elif side == "Left":
-            cords = [self.x - 10, self.y - 5, 20, 70]
-        elif side == "Right":
-            cords = [self.x + 43, self.y - 5, 20, 70]
-
-        return cords
+    # def search_target(self, side):
+    #     cords = []
+    #
+    #     if side == "Forward":
+    #         cords = [self.x, self.y + 60, 50, 20]
+    #     elif side == "Back":
+    #         cords = [self.x, self.y - 5, 50, 20]
+    #     elif side == "Left":
+    #         cords = [self.x - 10, self.y - 5, 20, 70]
+    #     elif side == "Right":
+    #         cords = [self.x + 43, self.y - 5, 20, 70]
+    #
+    #     return cords
 
     def give_damage(self, button_name, side):
         cords = []
@@ -132,10 +132,8 @@ class Hero:
         """Проверка длинны радиуса атаки"""
         pygame.draw.rect(self.screen, pygame.Color("Yellow"), cords, 2)
 
-        # if button_name == "z":
-        #     damage = 10
-        #
-        # return [damage, cords]
+        if button_name == "z":
+            return [10, cords]
 
     def change_mana(self, pressed_button):
         if pressed_button == "Attack":
