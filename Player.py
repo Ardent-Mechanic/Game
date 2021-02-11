@@ -124,7 +124,7 @@ class Hero:
         pygame.draw.rect(self.screen, pygame.Color("Yellow"), cords, 2)
 
         if button_name == "z":
-            return [20, cords]
+            return [5, cords]
 
     def change_mana(self, pressed_button):
         if pressed_button == "Attack":

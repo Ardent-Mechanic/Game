@@ -131,10 +131,14 @@ class World:
         for mob in self.mob_box:
             x_mob, y_mob = mob.get_mob_cords()
 
+            pygame.draw.rect(self.screen, pygame.Color("black"), (mob.x - 10, mob.y - 10, 50, 3))
+
             if mob.health_point <= 0:
                 pygame.draw.rect(self.screen, pygame.Color("white"), (mob.x, mob.y, 30, 30))
 
             else:
+
+                pygame.draw.rect(self.screen, pygame.Color("red"), (mob.x - 10, mob.y - 10, mob.health_point, 3))
 
                 if mob.status == "friendly":
                     mob.moving()
@@ -152,7 +156,7 @@ class World:
 
                     mob.damage_counter -= 1
 
-                pygame.draw.rect(self.screen, pygame.Color("Red"), (mob.x - 10, mob.y - 10, 50, 3))
+                # pygame.draw.rect(self.screen, pygame.Color("Red"), (mob.x - 10, mob.y - 10, 50, 3))
 
                 mob.render()
 
