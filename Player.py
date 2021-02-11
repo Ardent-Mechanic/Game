@@ -40,11 +40,11 @@ class Hero:
 
         for link in images:
             image = pygame.image.load(link).convert_alpha()
-            pose1 = pygame.transform.scale(image.subsurface(0, 0, 28, 34), PLAYER_SIZE)
-            pose2 = pygame.transform.scale(image.subsurface(28, 0, 28, 34), PLAYER_SIZE)
-            pose3 = pygame.transform.scale(image.subsurface(56, 0, 28, 34), PLAYER_SIZE)
+            pose1 = pygame.transform.scale(image.subsurface(28, 0, 28, 34), PLAYER_SIZE)
+            pose2 = pygame.transform.scale(image.subsurface(56, 0, 28, 34), PLAYER_SIZE)
+            pose3 = pygame.transform.scale(image.subsurface(84, 0, 28, 34), PLAYER_SIZE)
 
-            self.attack_moves.append([pose1, pose2, pose3, pose2])
+            self.attack_moves.append([pose1, pose2, pose3])
 
         imgs = pygame.image.load("Resources/health_and_mana_bar.png").convert_alpha()
         self.health_bar, self.mana_bar = imgs.subsurface(0, 0, 249, 29), imgs.subsurface(0, 25, 249, 28)
@@ -53,22 +53,27 @@ class Hero:
 
     def render(self):
 
-        if self.animation_counter + 1 >= len(self.moves[0]) * MAX_FRAMES_FOR_IMAGE:
-
-            if self.active_move["Attack"]:
-                self.active_move["Attack"] = False
-                self.give_damage("z", self.previous_active_move)
-                self.change_mana("Attack")
-                self.active_move[self.previous_active_move] = True
-
-            self.animation_counter = 0
-
         if self.active_move["Attack"]:
+
+            if self.animation_counter + 1 >= len(self.attack_moves[0]) * MAX_FRAMES_FOR_IMAGE:
+
+                if self.active_move["Attack"]:
+                    self.active_move["Attack"] = False
+
+                    # self.give_damage("z", self.previous_active_move)
+
+                    self.change_mana("Attack")
+                    self.active_move[self.previous_active_move] = True
+
+                self.animation_counter = 0
 
             self.screen.blit(self.attack_moves[list(self.active_move.keys()).index(self.previous_active_move)][
                                  self.animation_counter // MAX_FRAMES_FOR_IMAGE], (self.x, self.y))
 
         else:
+            if self.animation_counter + 1 >= len(self.moves[0]) * MAX_FRAMES_FOR_IMAGE:
+                self.animation_counter = 0
+
             if self.active_move["Forward"]:
                 self.screen.blit(self.moves[0][self.animation_counter // MAX_FRAMES_FOR_IMAGE], (self.x, self.y))
                 self.previous_active_move = "Forward"
@@ -103,20 +108,6 @@ class Hero:
     def get_damage(self, damage):
         self.health_point -= damage
 
-    def search_target(self, side):
-        cords = []
-
-        if side == "Forward":
-            cords = [self.x, self.y + 60, 50, 20]
-        elif side == "Back":
-            cords = [self.x, self.y - 5, 50, 20]
-        elif side == "Left":
-            cords = [self.x - 10, self.y - 5, 20, 70]
-        elif side == "Right":
-            cords = [self.x + 43, self.y - 5, 20, 70]
-
-        return cords
-
     def give_damage(self, button_name, side):
         cords = []
 
@@ -132,10 +123,8 @@ class Hero:
         """Проверка длинны радиуса атаки"""
         pygame.draw.rect(self.screen, pygame.Color("Yellow"), cords, 2)
 
-        # if button_name == "z":
-        #     damage = 10
-        #
-        # return [damage, cords]
+        if button_name == "z":
+            return [20, cords]
 
     def change_mana(self, pressed_button):
         if pressed_button == "Attack":

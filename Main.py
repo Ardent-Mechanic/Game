@@ -80,9 +80,11 @@ class World:
 
         self.mob = Mob(self.screen)
 
-        self.mob_box = [self.mob]
+        self.mob_box = [Mob(self.screen), Mob(self.screen), Mob(self.screen)]
 
     def render(self, com):
+        # cords = None
+
         self.screen.blit(self.background, (0, 0))
 
         if self.player.health_point != HP:
@@ -108,27 +110,47 @@ class World:
 
         self.screen.blit(self.player.mana_bar, MANA_BAR_CORDS)
 
+        # if self.player.active_move == "Attack":
+        #     dmg, cords = self.player.give_damage("z", self.player.previous_active_move)
+        #     print(cords)
+
         if self.player.mana_point > 0:
             pygame.draw.rect(self.screen, pygame.Color(45, 123, 163),
                              (775 + 3 + self.player.mana_point,
                               MANA_BAR_CORDS[1] + 3, MANA - self.player.mana_point, 22))
 
+        if self.player.active_move["Attack"] and self.player.animation_counter // MAX_FRAMES_FOR_IMAGE == 2:
+            damage, attack_cords = self.player.give_damage("z", self.player.previous_active_move)
+
+            [
+                mob.get_damage(damage) for mob in self.mob_box if
+                attack_cords[2] <= mob.x <= attack_cords[0] + attack_cords[2] and
+                attack_cords[1] <= mob.y <= attack_cords[1] + attack_cords[3]
+            ]
+
         for mob in self.mob_box:
+            x_mob, y_mob = mob.get_mob_cords()
 
             if mob.health_point <= 0:
                 pygame.draw.rect(self.screen, pygame.Color("white"), (mob.x, mob.y, 30, 30))
+
             else:
 
                 if mob.status == "friendly":
                     mob.moving()
 
                 elif mob.status == "aggressive":
-                    x_mob, y_mob = mob.get_mob_cords()
-                    x_player, y_player = self.player.get_player_cords()
+                    # x_mob, y_mob = mob.get_mob_cords()
+                    # x_player, y_player = self.player.get_player_cords()
                     mob.moving(self.player.get_player_cords())
 
                 elif mob.status == "attack":
-                    self.player.get_damage(10)
+
+                    if mob.damage_counter == 0:
+                        self.player.get_damage(mob.damage)
+                        mob.damage_counter = 20
+
+                    mob.damage_counter -= 1
 
                 pygame.draw.rect(self.screen, pygame.Color("Red"), (mob.x - 10, mob.y - 10, 50, 3))
 
@@ -167,6 +189,8 @@ class World:
                 self.player.x = self.player.y = 50
                 self.player.health_point = HP
                 self.player.mana_point = MANA
+                for mob in self.mob_box:
+                    mob.health_point = MONSTER_HP
 
             self.render(com)
 
