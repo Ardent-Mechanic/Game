@@ -80,9 +80,7 @@ class World:
 
         self.mob = Mob(self.screen)
 
-        self.mob_box = [self.mob]
-
-        # self.damage_counter
+        self.mob_box = [Mob(self.screen), Mob(self.screen), Mob(self.screen)]
 
     def render(self, com):
         # cords = None
@@ -120,8 +118,15 @@ class World:
             pygame.draw.rect(self.screen, pygame.Color(45, 123, 163),
                              (775 + 3 + self.player.mana_point,
                               MANA_BAR_CORDS[1] + 3, MANA - self.player.mana_point, 22))
-        # if cords:
-        #     print(cords)
+
+        if self.player.active_move["Attack"] and self.player.animation_counter // MAX_FRAMES_FOR_IMAGE == 2:
+            damage, attack_cords = self.player.give_damage("z", self.player.previous_active_move)
+
+            [
+                mob.get_damage(damage) for mob in self.mob_box if
+                attack_cords[2] <= mob.x <= attack_cords[0] + attack_cords[2] and
+                attack_cords[1] <= mob.y <= attack_cords[1] + attack_cords[3]
+            ]
 
         for mob in self.mob_box:
             x_mob, y_mob = mob.get_mob_cords()
@@ -142,7 +147,7 @@ class World:
                 elif mob.status == "attack":
 
                     if mob.damage_counter == 0:
-                        self.player.get_damage(10)
+                        self.player.get_damage(mob.damage)
                         mob.damage_counter = 20
 
                     mob.damage_counter -= 1
@@ -184,6 +189,8 @@ class World:
                 self.player.x = self.player.y = 50
                 self.player.health_point = HP
                 self.player.mana_point = MANA
+                for mob in self.mob_box:
+                    mob.health_point = MONSTER_HP
 
             self.render(com)
 
