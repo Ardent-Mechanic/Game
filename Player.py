@@ -20,6 +20,8 @@ class Hero:
         self.previous_active_move = "Forward"
         self.animation_counter = 0
 
+        self.damage_counter = 10
+
         self.x = 50
         self.y = 50
 
@@ -112,13 +114,13 @@ class Hero:
         cords = []
 
         if side == "Forward":
-            cords = [self.x, self.y + 60, 50, 20]
+            cords = [self.x, self.y + PLAYER_HITBOX_HEIGHT, 50, 20]
         elif side == "Back":
             cords = [self.x, self.y - 5, 50, 20]
         elif side == "Left":
-            cords = [self.x - 10, self.y - 5, 20, 70]
+            cords = [self.x - 20, self.y - 5, 20, 70]
         elif side == "Right":
-            cords = [self.x + 43, self.y - 5, 20, 70]
+            cords = [self.x + PLAYER_HITBOX_WEIGHT, self.y - 5, 20, 70]
 
         """Проверка длинны радиуса атаки"""
         pygame.draw.rect(self.screen, pygame.Color("Yellow"), cords, 2)
