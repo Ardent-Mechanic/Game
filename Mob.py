@@ -40,12 +40,11 @@ class Mob:
         if self.animation_counter + 1 >= 3 * MAX_FRAMES_FOR_IMAGE:
             self.animation_counter = 0
 
-            print(self.status)
-
             if self.status == "friendly":
                 self.move_choise = random.choice(["Forward", "Back", "Right", "Left"])
 
-        pygame.draw.rect(self.screen, pygame.Color('black'), (self.x, self.y, 30, 30))
+        pygame.draw.rect(self.screen, pygame.Color('black'),
+                         (self.x, self.y, MONSTER_HITBOX_WEIGHT, MONSTER_HITBOX_HEIGHT))
 
         self.animation_counter += 1
 
