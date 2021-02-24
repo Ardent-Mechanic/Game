@@ -3,7 +3,7 @@ import pygame
 
 
 class Hero:
-    def __init__(self, screen):
+    def __init__(self, screen, cords):
 
         self.screen = screen
 
@@ -16,14 +16,16 @@ class Hero:
         self.moves = []
         self.attack_moves = []
         self.death_animation = None
-        self.active_move = {"Forward": False, "Back": False, "Right": False, "Left": False, "Attack": False}
+        self.active_move = {"Forward": False, "Back": False, "Right": False,
+                            "Left": False, "Attack": False}
         self.previous_active_move = "Forward"
         self.animation_counter = 0
 
         self.damage_counter = 10
 
-        self.x = 50
-        self.y = 50
+        self.x, self.y = cords
+
+        self.wall_box = []
 
     def filling_moves(self):
         images = ["Resources/test_forward.png", "Resources/test_back.png",
@@ -61,8 +63,6 @@ class Hero:
 
                 if self.active_move["Attack"]:
                     self.active_move["Attack"] = False
-
-                    # self.give_damage("z", self.previous_active_move)
 
                     self.change_mana("Attack")
                     self.active_move[self.previous_active_move] = True
@@ -138,25 +138,47 @@ class Hero:
     def mn_regen(self):
         self.mana_point += MN_REGEN
 
+    def chek_collisions(self, c1, r1, c2, r2):
+        return self.wall_box[r1][c1] == -1 and self.wall_box[r1][c2] == -1 \
+               and self.wall_box[r2][c1] == -1 and self.wall_box[r2][c2]
+
+    def get_collision_box(self, com):
+
+        if com[pygame.K_LEFT]:
+            cords = [self.x + 12, self.y + 48, self.x + 12 + 26, self.y + 48 + 12]
+        elif com[pygame.K_RIGHT]:
+            cords = [self.x + 22, self.y + 48, self.x + 22 + 26, self.y + 48 + 12]
+        elif com[pygame.K_UP]:
+            cords = [self.x + 16, self.y + 42, self.x + 16 + 20, self.y + 42 + 10]
+        else:
+            cords = [self.x + 16, self.y + 52, self.x + 16 + 20, self.y + 52 + 10]
+
+        return cords
+
     def moving(self, pressed_button):
         skip_key = "None"
 
-        if pressed_button[pygame.K_LEFT] and self.x > 5:
+        cords = self.get_collision_box(pressed_button)
+
+        col1, col2 = (cords[0]) // 32, (cords[2]) // 32
+        row1, row2 = (cords[1]) // 32, (cords[3]) // 32
+
+        if pressed_button[pygame.K_LEFT] and self.chek_collisions(col1, row1, col2, row2):
             self.x -= SPEED
             self.active_move["Left"] = True
             skip_key = "Left"
 
-        elif pressed_button[pygame.K_RIGHT] and self.x + PLAYER_HITBOX_WEIGHT < SCREEN_WEIGHT - 5:
+        elif pressed_button[pygame.K_RIGHT] and self.chek_collisions(col1, row1, col2, row2):
             self.x += SPEED
             self.active_move["Right"] = True
             skip_key = "Right"
 
-        elif pressed_button[pygame.K_UP] and self.y > 5:
+        elif pressed_button[pygame.K_UP] and self.chek_collisions(col1, row1, col2, row2):
             self.y -= SPEED
             self.active_move["Back"] = True
             skip_key = "Back"
 
-        elif pressed_button[pygame.K_DOWN] and self.y + PLAYER_HITBOX_HEIGHT < SCREEN_HEIGHT - 5:
+        elif pressed_button[pygame.K_DOWN] and self.chek_collisions(col1, row1, col2, row2):
             self.y += SPEED
             self.active_move["Forward"] = True
             skip_key = "Forward"
@@ -165,8 +187,5 @@ class Hero:
             if self.mana_point > 0:
                 self.active_move["Attack"] = True
                 skip_key = "Attack"
-
-        elif pressed_button[pygame.K_SPACE]:
-            self.get_damage(5)
 
         self.chek_active_move(skip_key)

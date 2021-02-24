@@ -2,6 +2,7 @@ import pygame
 from Constants import *
 from Player import Hero
 from Mob import *
+from map import Map
 
 
 class Menu:
@@ -56,10 +57,45 @@ class Menu:
         pygame.quit()
 
 
+class WindowAfterDeath:
+    def __init__(self):
+        pygame.mouse.set_visible(True)
+        self.window_surface = pygame.display.set_mode((SCREEN_WEIGHT, SCREEN_HEIGHT))
+
+        self.background = pygame.Surface((SCREEN_WEIGHT, SCREEN_HEIGHT))
+        self.background.fill(pygame.Color(40, 40, 40))
+        img = pygame.transform.scale(pygame.image.load("Resources/Main menu/game_over.png"), (250, 250))
+
+        self.background.blit(img, (SCREEN_WEIGHT // 2 - 140, SCREEN_HEIGHT // 2 - 250))
+        self.background.blit(pygame.image.load("Resources/Main menu/restart.png"), (180, SCREEN_HEIGHT // 2))
+
+        self.running = True
+
+    def main(self):
+
+        while self.running:
+            pygame.time.Clock().tick(FPS)
+            key = pygame.key.get_pressed()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+
+                if key[pygame.K_r]:
+                    World(screen).main_loop()
+
+                if key[pygame.K_ESCAPE]:
+                    self.running = False
+
+            self.window_surface.blit(self.background, (0, 0))
+
+            pygame.display.update()
+        pygame.quit()
+
+
 class Cursor(pygame.sprite.Sprite):
     def __init__(self, group):
         super(Cursor, self).__init__(group)
-        self.image = pygame.transform.scale(pygame.image.load("Resources/Main menu/cursor.png").convert_alpha(),
+        self.image = pygame.transform.scale(pygame.image.load("Resources/Main menu/cursor1.png").convert_alpha(),
                                             (35, 40))
         self.rect = self.image.get_rect()
 
@@ -69,39 +105,43 @@ class Cursor(pygame.sprite.Sprite):
 
 class World:
     def __init__(self, screen):
-        pygame.mouse.set_visible(True)
+        # pygame.mouse.set_visible(True)
 
         self.screen = screen
-        self.background = pygame.image.load(BACK_GROUND[0])
 
         self.running = True
 
-        self.player = Hero(self.screen)
+        self.weight = SCREEN_WEIGHT // 16
 
-        self.mob = Mob(self.screen)
+        self.height = SCREEN_HEIGHT // 16
 
-        self.mob_box = [Mob(self.screen)]
+        with open("level_number.txt", mode="r", encoding="utf8") as lvl:
+            self.level = int(lvl.read().strip())
 
-    # def create_mob_animations(self):
-    #
-    #     self.snake = []
-    #
-    #     image_pack = [["Resources/snake_forward.png", "Resources/snake_back.png",
-    #                    "Resources/snake_right.png", "Resources/snake_left.png"]]
-    #
-    #     for images in image_pack:
-    #         for link in images:
-    #             image = pygame.image.load(link).convert_alpha()
-    #             pose1 = pygame.transform.scale(image.subsurface(0, 0, 28, 34), PLAYER_SIZE)
-    #             pose2 = pygame.transform.scale(image.subsurface(28, 0, 28, 34), PLAYER_SIZE)
-    #             pose3 = pygame.transform.scale(image.subsurface(56, 0, 28, 34), PLAYER_SIZE)
-    #
-    #         self.snake.append([pose1, pose2, pose3, pose2])
+        self.lvl_info = LVL[self.level - 1]
 
-    def render(self, com):
-        # cords = None
+        self.player = Hero(self.screen, self.lvl_info["PLAYER_CORD"])
 
-        self.screen.blit(self.background, (0, 0))
+        self.mob_box = [Mob(self.screen, mob_type, cords) for mob_type, cords in self.lvl_info["MONSTERS"]]
+
+        self.map = Map(self.level, screen)
+
+        self.window = WindowAfterDeath()
+
+    def render_models(self, com):
+
+        self.screen.blit(self.map.background_pic, (0, 0))
+
+        if self.player.health_point <= 0:
+            self.screen.blit(self.player.death_animation, (self.player.x, self.player.y))
+            self.window.main()
+
+        else:
+            x, y = self.player.get_player_cords()
+
+            self.player.moving(com)
+
+            self.player.render()
 
         if self.player.health_point != HP:
             self.player.hp_regen()
@@ -109,15 +149,7 @@ class World:
         if self.player.mana_point != MANA:
             self.player.mn_regen()
 
-        if self.player.health_point <= 0:
-            self.screen.blit(self.player.death_animation, (self.player.x, self.player.y))
-        else:
-            self.player.moving(com)
-            self.player.render()
-
         self.screen.blit(self.player.health_bar, HEALTH_BAR_CORDS)
-
-        """Дамаг и трата стамины немного неправильно рисуются. Переписать."""
 
         if self.player.health_point > 0:
             pygame.draw.rect(self.screen, pygame.Color(160, 55, 53),
@@ -148,13 +180,13 @@ class World:
 
             self.player.damage_counter -= 1
 
-        for mob in self.mob_box:
-            x_mob, y_mob = mob.get_mob_cords()
+        for index, mob in enumerate(self.mob_box[::]):
 
             pygame.draw.rect(self.screen, pygame.Color("black"), (mob.x - 10, mob.y - 10, 50, 3))
 
             if mob.health_point <= 0:
                 pygame.draw.rect(self.screen, pygame.Color("white"), (mob.x, mob.y, 30, 30))
+                del self.mob_box[index]
 
             else:
 
@@ -164,8 +196,6 @@ class World:
                     mob.moving()
 
                 elif mob.status == "aggressive":
-                    # x_mob, y_mob = mob.get_mob_cords()
-                    # x_player, y_player = self.player.get_player_cords()
                     mob.moving(self.player.get_player_cords())
 
                 elif mob.status == "attack":
@@ -176,13 +206,20 @@ class World:
 
                     mob.damage_counter -= 1
 
-                # pygame.draw.rect(self.screen, pygame.Color("Red"), (mob.x - 10, mob.y - 10, 50, 3))
-
                 mob.render()
 
     def main_loop(self):
 
         self.player.filling_moves()
+
+        [mob.filling_moves() for mob in self.mob_box]
+
+        self.map.create_map()
+
+        self.player.wall_box = self.map.walls_cords
+
+        for mob in self.mob_box:
+            mob.wall_box = self.map.walls_cords
 
         while self.running:
             pygame.time.Clock().tick(FPS)
@@ -204,19 +241,18 @@ class World:
                     mob.status = "aggressive"
 
                 else:
+
                     if mob.status != "friendly":
                         mob.status = "friendly"
 
             com = pygame.key.get_pressed()
 
-            if com[pygame.K_r]:
-                self.player.x = self.player.y = 50
-                self.player.health_point = HP
-                self.player.mana_point = MANA
-                for mob in self.mob_box:
-                    mob.health_point = MONSTER_HP
+            self.render_models(com)
 
-            self.render(com)
+            if len(self.mob_box) == 0:
+                with open("level_number.txt", mode="w", encoding="utf8") as lvl:
+                    lvl.write(str(self.level + 1))
+                World(screen).main_loop()
 
             pygame.display.flip()
 

@@ -1,7 +1,5 @@
-SCREEN_HEIGHT = 800
+SCREEN_HEIGHT = 1024
 SCREEN_WEIGHT = 1024
-
-BACK_GROUND = ["Resources/Floor.png"]
 
 HP = 243
 MANA = 243
@@ -10,7 +8,7 @@ HP_REGEN = 1
 MN_REGEN = 1
 
 SPEED = 5
-FPS = 30
+FPS = 60
 
 MONSTER_SPEED = 3
 MONSTER_HP = 50
@@ -26,5 +24,13 @@ PLAYER_HITBOX_HEIGHT = 34 * 2
 PLAYER_HITBOX_WEIGHT = 28 * 2
 
 PLAYER_SIZE = (28 * 2, 34 * 2)
+MONSTER_SIZE = (32, 32)
 
-MAX_FRAMES_FOR_IMAGE = 5
+MAX_FRAMES_FOR_IMAGE = 4
+
+LVL = [{"PLAYER_CORD": [100, 100],
+       "MONSTERS": [["snake", [250, 100]], ["fire", [450, 240]], ["snake", [96, 896]], ["snake", [448, 640]]]},
+       {"PLAYER_CORD": [100, 100],
+        "MONSTERS": [["snake", [400, 200]], ["fire", [768, 432]],
+                     ["snake", [120, 896]], ["snake", [448, 640]], ["fire", [256, 576]]]}
+       ]
