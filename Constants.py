@@ -25,7 +25,6 @@ PLAYER_HITBOX_WEIGHT = 28 * 2
 
 PLAYER_SIZE = (28 * 2, 34 * 2)
 MONSTER_SIZE = (32, 32)
-# PLAYER_SIZE = (28, 34)
 
 MAX_FRAMES_FOR_IMAGE = 4
 
@@ -35,4 +34,3 @@ LVL = [{"PLAYER_CORD": [100, 100],
         "MONSTERS": [["snake", [400, 200]], ["fire", [768, 432]],
                      ["snake", [120, 896]], ["snake", [448, 640]], ["fire", [256, 576]]]}
        ]
-LVL_MONSTER = [["snake", "fire", "snake", "snake"], ["fire", "fire", "fire", "snake"]]
