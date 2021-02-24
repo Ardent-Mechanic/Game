@@ -4,11 +4,11 @@ import random
 
 
 class Mob:
-    def __init__(self, screen, type):
+    def __init__(self, screen, mob_type, cords):
         self.screen = screen
         # self.image_pack = image_pack
 
-        self.type = type
+        self.mob_type = mob_type
 
         self.status = "friendly"
 
@@ -21,8 +21,7 @@ class Mob:
 
         self.damage = 50
 
-        self.x = 500
-        self.y = 200
+        self.x, self.y = cords
 
         self.line_of_sight = MONSTER_LINE_OF_SIGHT
 
@@ -40,11 +39,11 @@ class Mob:
         # self.screen.blit(self.moves[0], (self.x, self.y))
 
     def filling_moves(self):
-        print(f"Resources/monsters_sprites/{self.type}/{self.type}_forward.png")
-        images = [f"Resources/monsters_sprites/{self.type}/{self.type}_forward.png",
-                  f"Resources/monsters_sprites/{self.type}/{self.type}_back.png",
-                  f"Resources/monsters_sprites/{self.type}/{self.type}_right.png",
-                  f"Resources/monsters_sprites/{self.type}/{self.type}_left.png"]
+        print(f"Resources/monsters_sprites/{self.mob_type}/{self.mob_type}_forward.png")
+        images = [f"Resources/monsters_sprites/{self.mob_type}/{self.mob_type}_forward.png",
+                  f"Resources/monsters_sprites/{self.mob_type}/{self.mob_type}_back.png",
+                  f"Resources/monsters_sprites/{self.mob_type}/{self.mob_type}_right.png",
+                  f"Resources/monsters_sprites/{self.mob_type}/{self.mob_type}_left.png"]
 
         for link in images:
             image = pygame.image.load(link).convert_alpha()

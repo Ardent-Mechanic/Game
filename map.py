@@ -1,5 +1,4 @@
 import pygame
-# import pytmx
 import csv
 from Constants import *
 from PIL import Image
@@ -37,13 +36,6 @@ class Map:
             for row in data:
                 self.walls_cords.append(list(map(int, row)))
 
-    # def pilImageToSurface(self, pill_image):
-    #     return pygame.image.fromstring(
-    #         pill_image.tobytes(), pill_image.size, pill_image.mode).convert()
-    #
-    # def give_level_element(self):
-    #     return self.pilImageToSurface(self.background_pic), self.pilImageToSurface(self.walls_pic)
-
     def load_tiles(self):
         for row in range(self.height):
             for col in range(self.width):
@@ -63,7 +55,6 @@ class Map:
 
         self.background_pic.paste(self.walls_pic, (0, 0), self.walls_pic)
         self.background_pic.save(f"Resources/maps/{self.level_number}/background.png")
-        # img = self.background_pic.paste(self.walls_pic, Image.ANTIALIAS, (0, 0))
 
     def create_map(self):
         self.csv_reader()
@@ -73,19 +64,11 @@ class Map:
     def chek_postion(self, cords):
         col1, col2 = (cords[0] - 3) // self.tile_size, (cords[2] - 3) // self.tile_size
         row1, row2 = (cords[1] - 6) // self.tile_size, (cords[3] + 6) // self.tile_size
-        # print(col1, row1)
-        # print(col2, row2)
-        # print(self.walls_cords[col1][row1])
-        # print(self.walls_cords[col1][row2])
-        # print(self.walls_cords[col2][row2])
-        # print(self.walls_cords[col2][row1])
-        # print("____________________________")
         return (self.walls_cords[row1][col1] == -1 and self.walls_cords[row2][col2] == -1) \
                or (self.walls_cords[row1][col2] == -1 and self.walls_cords[row2][col1] == -1)
 
 
 if __name__ == '__main__':
-    # boom.render_world()
     pygame.init()
     size = width, height = 1024, 1024
     screen = pygame.display.set_mode(size)

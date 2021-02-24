@@ -3,7 +3,7 @@ import pygame
 
 
 class Hero:
-    def __init__(self, screen):
+    def __init__(self, screen, cords):
 
         self.screen = screen
 
@@ -23,8 +23,7 @@ class Hero:
 
         self.damage_counter = 10
 
-        self.x = 100
-        self.y = 100
+        self.x, self.y = cords
 
         self.wall_box = []
 
@@ -65,8 +64,6 @@ class Hero:
                 if self.active_move["Attack"]:
                     self.active_move["Attack"] = False
 
-                    # self.give_damage("z", self.previous_active_move)
-
                     self.change_mana("Attack")
                     self.active_move[self.previous_active_move] = True
 
@@ -96,8 +93,6 @@ class Hero:
                 self.previous_active_move = "Left"
 
             else:
-                # self.screen.blit(self.moves[list(self.active_move.keys()).index(self.previous_active_move)][1],
-                #                  (self.x, self.y))
                 self.screen.blit(self.moves[list(self.active_move.keys()).index(self.previous_active_move)][1],
                                  (self.x, self.y))
                 self.animation_counter = 0
@@ -143,31 +138,21 @@ class Hero:
     def mn_regen(self):
         self.mana_point += MN_REGEN
 
-    # def chek_postion(self, cords):
-    #     col1, col2 = (cords[0] - 3) // 32, (cords[2] - 3) // 32
-    #     row1, row2 = (cords[1] - 6) // 32, (cords[3] + 6) // 32
-    #
-    #     return (self.wall_box[row1][col1] == -1 and self.wall_box[row1][col2] == -1) \
-    #            or (self.wall_box[row2][col1] == -1 and self.wall_box[row2][col2] == -1) \
-    #            or (self.wall_box[row1][col1] == -1 and self.wall_box[row2][col1] == -1) \
-    #            or (self.wall_box[row1][col2] == -1 and self.wall_box[row2][col2] == -1)
-
     def chek_collisions(self, c1, r1, c2, r2):
         return self.wall_box[r1][c1] == -1 and self.wall_box[r1][c2] == -1 \
                and self.wall_box[r2][c1] == -1 and self.wall_box[r2][c2]
 
     def get_collision_box(self, com):
+
         if com[pygame.K_LEFT]:
             cords = [self.x + 12, self.y + 48, self.x + 12 + 26, self.y + 48 + 12]
-            # cords = [self.x + 12, self.y - 2, self.x + 26 + 12, self.y + 62 - 2]
         elif com[pygame.K_RIGHT]:
             cords = [self.x + 22, self.y + 48, self.x + 22 + 26, self.y + 48 + 12]
-            # cords = [self.x + 22, self.y - 2, self.x + 26 + 22, self.y + 62 - 2]
         elif com[pygame.K_UP]:
             cords = [self.x + 16, self.y + 42, self.x + 16 + 20, self.y + 42 + 10]
-
         else:
             cords = [self.x + 16, self.y + 52, self.x + 16 + 20, self.y + 52 + 10]
+
         return cords
 
     def moving(self, pressed_button):
@@ -202,8 +187,5 @@ class Hero:
             if self.mana_point > 0:
                 self.active_move["Attack"] = True
                 skip_key = "Attack"
-
-        elif pressed_button[pygame.K_SPACE]:
-            self.get_damage(5)
 
         self.chek_active_move(skip_key)
