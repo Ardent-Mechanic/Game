@@ -85,9 +85,9 @@ class World:
 
         self.player = Hero(self.screen)
 
-        self.mob = Mob(self.screen)
+        self.mob = Mob(self.screen, "snake")
 
-        self.mob_box = [Mob(self.screen)]
+        self.mob_box = [Mob(self.screen, "snake")]
 
         self.map = Map(1, screen)
 
@@ -122,14 +122,17 @@ class World:
             # self.player.moving(com)
 
             if com[pygame.K_LEFT]:
-                pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 12, y + 48, 26, 12), 1)
-                pygame.draw.rect(self.screen, pygame.Color("red"), (x + 12, y - 2, 26, 62), 1)
+                # pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 4, y + 48, 26, 12), 1)
+                pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 4, y + 48, 26, 12), 1)
+                # pygame.draw.rect(self.screen, pygame.Color("red"), (x + 12, y - 2, 26, 62), 1)
             elif com[pygame.K_RIGHT]:
-                pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 22, y + 48, 26, 12), 1)
-                pygame.draw.rect(self.screen, pygame.Color("red"), (x + 22, y - 2, 26, 62), 1)
-            elif com[pygame.K_UP] or com[pygame.K_DOWN]:
-                pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 12, y + 48, 26, 12), 1)
-                pygame.draw.rect(self.screen, pygame.Color("red"), (x + 12, y - 2, 26, 62), 1)
+                pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 26, y + 48, 26, 12), 1)
+                # pygame.draw.rect(self.screen, pygame.Color("red"), (x + 22, y - 2, 26, 62), 1)
+            elif com[pygame.K_UP]:
+                pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 16, y + 42, 20, 10), 1)
+                # pygame.draw.rect(self.screen, pygame.Color("red"), (x + 12, y - 2, 26, 62), 1)
+            else:
+                pygame.draw.rect(self.screen, pygame.Color("yellow"), (x + 16, y + 52, 20, 10), 1)
             self.player.render()
 
         self.screen.blit(self.player.health_bar, HEALTH_BAR_CORDS)
@@ -198,6 +201,9 @@ class World:
     def main_loop(self):
 
         self.player.filling_moves()
+
+        [mob.filling_moves() for mob in self.mob_box]
+        [print(mob.moves) for mob in self.mob_box]
 
         self.map.create_map()
 

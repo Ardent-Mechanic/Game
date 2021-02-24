@@ -143,56 +143,62 @@ class Hero:
     def mn_regen(self):
         self.mana_point += MN_REGEN
 
-    def chek_postion(self, cords):
-        col1, col2 = (cords[0] - 3) // 32, (cords[2] - 3) // 32
-        row1, row2 = (cords[1] - 6) // 32, (cords[3] + 6) // 32
+    # def chek_postion(self, cords):
+    #     col1, col2 = (cords[0] - 3) // 32, (cords[2] - 3) // 32
+    #     row1, row2 = (cords[1] - 6) // 32, (cords[3] + 6) // 32
+    #
+    #     return (self.wall_box[row1][col1] == -1 and self.wall_box[row1][col2] == -1) \
+    #            or (self.wall_box[row2][col1] == -1 and self.wall_box[row2][col2] == -1) \
+    #            or (self.wall_box[row1][col1] == -1 and self.wall_box[row2][col1] == -1) \
+    #            or (self.wall_box[row1][col2] == -1 and self.wall_box[row2][col2] == -1)
 
-        return (self.wall_box[row1][col1] == -1 and self.wall_box[row1][col2] == -1) \
-               or (self.wall_box[row2][col1] == -1 and self.wall_box[row2][col2] == -1) \
-               or (self.wall_box[row1][col1] == -1 and self.wall_box[row2][col1] == -1) \
-               or (self.wall_box[row1][col2] == -1 and self.wall_box[row2][col2] == -1)
+    def chek_collisions(self, c1, r1, c2, r2):
+        return self.wall_box[r1][c1] == -1 and self.wall_box[r1][c2] == -1 \
+               and self.wall_box[r2][c1] == -1 and self.wall_box[r2][c2]
 
-    def chek_collisions(self, com):
+    def get_collision_box(self, com):
         if com[pygame.K_LEFT]:
             cords = [self.x + 12, self.y + 48, self.x + 12 + 26, self.y + 48 + 12]
             # cords = [self.x + 12, self.y - 2, self.x + 26 + 12, self.y + 62 - 2]
         elif com[pygame.K_RIGHT]:
             cords = [self.x + 22, self.y + 48, self.x + 22 + 26, self.y + 48 + 12]
             # cords = [self.x + 22, self.y - 2, self.x + 26 + 22, self.y + 62 - 2]
+        elif com[pygame.K_UP]:
+            cords = [self.x + 16, self.y + 42, self.x + 16 + 20, self.y + 42 + 10]
+
         else:
-            cords = [self.x + 12, self.y + 48, self.x + 12 + 26, self.y + 48 + 12]
-            # cords = [self.x + 12, self.y - 2, self.x + 26 + 12, self.y + 62 - 2]
+            cords = [self.x + 16, self.y + 52, self.x + 16 + 20, self.y + 52 + 10]
         return cords
 
     def moving(self, pressed_button):
         skip_key = "None"
 
-        cords = self.chek_collisions(pressed_button)
-
-        print(cords)
+        cords = self.get_collision_box(pressed_button)
 
         col1, col2 = (cords[0]) // 32, (cords[2]) // 32
         row1, row2 = (cords[1]) // 32, (cords[3]) // 32
 
-        print(row1, col1)
-        print(row2, col2)
+        if col1 == col2 and row1 == row2:
+            print("Yes")
+            print(col1, row1)
+            print(col2, row2)
 
-        if pressed_button[pygame.K_LEFT] and self.wall_box[row1][col1] == -1 and self.wall_box[row2][col1] == -1:
+        if pressed_button[pygame.K_LEFT] and self.chek_collisions(col1, row1, col2, row2):
             self.x -= SPEED
             self.active_move["Left"] = True
             skip_key = "Left"
 
-        elif pressed_button[pygame.K_RIGHT] and self.wall_box[row1][col2] == -1 and self.wall_box[row2][col2] == -1:
+        elif pressed_button[pygame.K_RIGHT] and self.chek_collisions(col1, row1, col2, row2):
             self.x += SPEED
             self.active_move["Right"] = True
             skip_key = "Right"
 
-        elif pressed_button[pygame.K_UP] and self.wall_box[row1][col1] == -1 and self.wall_box[row1][col2] == -1:
+        elif pressed_button[pygame.K_UP] and self.chek_collisions(col1, row1, col2, row2):
             self.y -= SPEED
             self.active_move["Back"] = True
             skip_key = "Back"
 
-        elif pressed_button[pygame.K_DOWN] and self.wall_box[row2][col1] == -1 and self.wall_box[row2][col2] == -1:
+        elif pressed_button[pygame.K_DOWN] and self.chek_collisions(col1, row1, col2, row2):
             self.y += SPEED
             self.active_move["Forward"] = True
             skip_key = "Forward"
