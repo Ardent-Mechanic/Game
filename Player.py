@@ -13,6 +13,9 @@ class Hero:
         self.mana_bar = None
         self.mana_point = MANA
 
+        self.sword_sound = pygame.mixer.Sound('Resources/sound/sword.mp3')
+        self.sword_sound.set_volume(10.0)
+
         self.moves = []
         self.attack_moves = []
         self.death_animation = None
@@ -62,6 +65,7 @@ class Hero:
             if self.animation_counter + 1 >= len(self.attack_moves[0]) * MAX_FRAMES_FOR_IMAGE:
 
                 if self.active_move["Attack"]:
+                    self.sword_sound.play()
                     self.active_move["Attack"] = False
 
                     self.change_mana("Attack")

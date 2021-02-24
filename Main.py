@@ -128,6 +128,9 @@ class World:
 
         self.window = WindowAfterDeath()
 
+        self.damage_sound = pygame.mixer.Sound('Resources/sound/damage.mp3')
+        self.damage_sound.set_volume(10.0)
+
     def render_models(self, com):
 
         self.screen.blit(self.map.background_pic, (0, 0))
@@ -168,13 +171,15 @@ class World:
             if self.player.damage_counter == 0:
                 damage, attack_cords = self.player.give_damage("z", self.player.previous_active_move)
 
-                [
-                    mob.get_damage(damage) for mob in self.mob_box if
-                    (mob.x <= attack_cords[0] <= mob.x + MONSTER_HITBOX_WEIGHT
-                     or attack_cords[0] <= mob.x <= attack_cords[0] + attack_cords[2]) and
-                    (mob.y <= attack_cords[1] <= mob.y + MONSTER_HITBOX_HEIGHT
-                     or attack_cords[1] <= mob.y <= attack_cords[1] + attack_cords[3])
-                ]
+                # self.damage_sound.play()
+
+                for mob in self.mob_box:
+                    if (mob.x <= attack_cords[0] <= mob.x + MONSTER_HITBOX_WEIGHT or attack_cords[0] <= mob.x <=
+                        attack_cords[0] + attack_cords[2]) and (
+                            mob.y <= attack_cords[1] <= mob.y + MONSTER_HITBOX_HEIGHT or attack_cords[1] <= mob.y <=
+                            attack_cords[1] + attack_cords[3]):
+                        self.damage_sound.play()
+                        mob.get_damage(damage)
 
                 self.player.damage_counter = 10
 
@@ -208,6 +213,12 @@ class World:
 
                 mob.render()
 
+    def play_music(self):
+        pygame.mixer.pre_init(44100, -16, 2, 2048)
+        pygame.mixer.init()
+        pygame.mixer.music.load('Resources/sound/bg_music.mp3')
+        pygame.mixer.music.play(10)
+
     def main_loop(self):
 
         self.player.filling_moves()
@@ -217,6 +228,8 @@ class World:
         self.map.create_map()
 
         self.player.wall_box = self.map.walls_cords
+
+        self.play_music()
 
         for mob in self.mob_box:
             mob.wall_box = self.map.walls_cords
