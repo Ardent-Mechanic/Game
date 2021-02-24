@@ -1,7 +1,10 @@
-SCREEN_HEIGHT = 800
+import pygame
+
+SCREEN_HEIGHT = 1024
 SCREEN_WEIGHT = 1024
 
-BACK_GROUND = ["Resources/Floor.png"]
+# BACK_GROUND = "Resources/test.png"
+BACK_GROUND = [pygame.transform.scale(pygame.image.load("Resources/test.png"), (512 * 2, 512 * 2))]
 
 HP = 243
 MANA = 243
@@ -26,5 +29,6 @@ PLAYER_HITBOX_HEIGHT = 34 * 2
 PLAYER_HITBOX_WEIGHT = 28 * 2
 
 PLAYER_SIZE = (28 * 2, 34 * 2)
+# PLAYER_SIZE = (28, 34)
 
-MAX_FRAMES_FOR_IMAGE = 5
+MAX_FRAMES_FOR_IMAGE = 4

@@ -33,12 +33,8 @@ class Map:
         self.background_cords = []
         self.walls_cords = []
 
-        self.background_pic = Image.new('RGB', (SCREEN_WEIGHT, SCREEN_HEIGHT))
-        self.walls_pic = Image.new('RGB', (SCREEN_WEIGHT, SCREEN_HEIGHT))
-
-    def render_world(self):
-        self.screen.blit(self.background_pic, (0, 0))
-        self.screen.blit(self.walls_pic, (0, 0))
+        self.background_pic = Image.new('RGBA', (SCREEN_WEIGHT, SCREEN_HEIGHT))
+        self.walls_pic = Image.new('RGBA', (SCREEN_WEIGHT, SCREEN_HEIGHT))
 
     def csv_reader(self):
 
@@ -52,12 +48,12 @@ class Map:
             for row in data:
                 self.walls_cords.append(list(map(int, row)))
 
-    def pilImageToSurface(self, pill_image):
-        return pygame.image.fromstring(
-            pill_image.tobytes(), pill_image.size, pill_image.mode).convert()
-
-    def give_level_element(self):
-        return self.pilImageToSurface(self.background_pic), self.pilImageToSurface(self.walls_pic)
+    # def pilImageToSurface(self, pill_image):
+    #     return pygame.image.fromstring(
+    #         pill_image.tobytes(), pill_image.size, pill_image.mode).convert()
+    #
+    # def give_level_element(self):
+    #     return self.pilImageToSurface(self.background_pic), self.pilImageToSurface(self.walls_pic)
 
     def load_tiles(self):
         for row in range(self.height):
@@ -75,12 +71,28 @@ class Map:
                     self.background_pic.paste(
                         Image.open(f"Resources/tileset/{img_num}.png").resize((32, 32), Image.ANTIALIAS),
                         (col * 32, row * 32))
-        self.walls_pic.save("123.png")
+
+        self.background_pic.paste(self.walls_pic, (0, 0), self.walls_pic)
+        self.background_pic.save(f"Resources/maps/{self.level_number}/background.png")
+        # img = self.background_pic.paste(self.walls_pic, Image.ANTIALIAS, (0, 0))
 
     def create_map(self):
         self.csv_reader()
         self.load_tiles()
-        self.background_pic, self.walls_pic = self.give_level_element()
+        self.background_pic = pygame.image.load(f"Resources/maps/{self.level_number}/background.png")
+
+    def chek_postion(self, cords):
+        col1, col2 = (cords[0] - 3) // self.tile_size, (cords[2] - 3) // self.tile_size
+        row1, row2 = (cords[1] - 6) // self.tile_size, (cords[3] + 6) // self.tile_size
+        # print(col1, row1)
+        # print(col2, row2)
+        # print(self.walls_cords[col1][row1])
+        # print(self.walls_cords[col1][row2])
+        # print(self.walls_cords[col2][row2])
+        # print(self.walls_cords[col2][row1])
+        # print("____________________________")
+        return (self.walls_cords[row1][col1] == -1 and self.walls_cords[row2][col2] == -1) \
+               or (self.walls_cords[row1][col2] == -1 and self.walls_cords[row2][col1] == -1)
 
 
 if __name__ == '__main__':
@@ -91,13 +103,13 @@ if __name__ == '__main__':
 
     boom = Map(1, screen)
     boom.create_map()
-    boom.render_world()
 
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        boom.render_world()
+
+        screen.blit(boom.background_pic, (0, 0))
         pygame.display.flip()
     pygame.quit()

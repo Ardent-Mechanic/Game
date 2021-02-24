@@ -16,14 +16,17 @@ class Hero:
         self.moves = []
         self.attack_moves = []
         self.death_animation = None
-        self.active_move = {"Forward": False, "Back": False, "Right": False, "Left": False, "Attack": False}
+        self.active_move = {"Forward": False, "Back": False, "Right": False,
+                            "Left": False, "Attack": False}
         self.previous_active_move = "Forward"
         self.animation_counter = 0
 
         self.damage_counter = 10
 
-        self.x = 50
-        self.y = 50
+        self.x = 100
+        self.y = 100
+
+        self.wall_box = []
 
     def filling_moves(self):
         images = ["Resources/test_forward.png", "Resources/test_back.png",
@@ -93,6 +96,8 @@ class Hero:
                 self.previous_active_move = "Left"
 
             else:
+                # self.screen.blit(self.moves[list(self.active_move.keys()).index(self.previous_active_move)][1],
+                #                  (self.x, self.y))
                 self.screen.blit(self.moves[list(self.active_move.keys()).index(self.previous_active_move)][1],
                                  (self.x, self.y))
                 self.animation_counter = 0
@@ -138,25 +143,56 @@ class Hero:
     def mn_regen(self):
         self.mana_point += MN_REGEN
 
+    def chek_postion(self, cords):
+        col1, col2 = (cords[0] - 3) // 32, (cords[2] - 3) // 32
+        row1, row2 = (cords[1] - 6) // 32, (cords[3] + 6) // 32
+
+        return (self.wall_box[row1][col1] == -1 and self.wall_box[row1][col2] == -1) \
+               or (self.wall_box[row2][col1] == -1 and self.wall_box[row2][col2] == -1) \
+               or (self.wall_box[row1][col1] == -1 and self.wall_box[row2][col1] == -1) \
+               or (self.wall_box[row1][col2] == -1 and self.wall_box[row2][col2] == -1)
+
+    def chek_collisions(self, com):
+        if com[pygame.K_LEFT]:
+            cords = [self.x + 12, self.y + 48, self.x + 12 + 26, self.y + 48 + 12]
+            # cords = [self.x + 12, self.y - 2, self.x + 26 + 12, self.y + 62 - 2]
+        elif com[pygame.K_RIGHT]:
+            cords = [self.x + 22, self.y + 48, self.x + 22 + 26, self.y + 48 + 12]
+            # cords = [self.x + 22, self.y - 2, self.x + 26 + 22, self.y + 62 - 2]
+        else:
+            cords = [self.x + 12, self.y + 48, self.x + 12 + 26, self.y + 48 + 12]
+            # cords = [self.x + 12, self.y - 2, self.x + 26 + 12, self.y + 62 - 2]
+        return cords
+
     def moving(self, pressed_button):
         skip_key = "None"
 
-        if pressed_button[pygame.K_LEFT] and self.x > 5:
+        cords = self.chek_collisions(pressed_button)
+
+        print(cords)
+
+        col1, col2 = (cords[0]) // 32, (cords[2]) // 32
+        row1, row2 = (cords[1]) // 32, (cords[3]) // 32
+
+        print(row1, col1)
+        print(row2, col2)
+
+        if pressed_button[pygame.K_LEFT] and self.wall_box[row1][col1] == -1 and self.wall_box[row2][col1] == -1:
             self.x -= SPEED
             self.active_move["Left"] = True
             skip_key = "Left"
 
-        elif pressed_button[pygame.K_RIGHT] and self.x + PLAYER_HITBOX_WEIGHT < SCREEN_WEIGHT - 5:
+        elif pressed_button[pygame.K_RIGHT] and self.wall_box[row1][col2] == -1 and self.wall_box[row2][col2] == -1:
             self.x += SPEED
             self.active_move["Right"] = True
             skip_key = "Right"
 
-        elif pressed_button[pygame.K_UP] and self.y > 5:
+        elif pressed_button[pygame.K_UP] and self.wall_box[row1][col1] == -1 and self.wall_box[row1][col2] == -1:
             self.y -= SPEED
             self.active_move["Back"] = True
             skip_key = "Back"
 
-        elif pressed_button[pygame.K_DOWN] and self.y + PLAYER_HITBOX_HEIGHT < SCREEN_HEIGHT - 5:
+        elif pressed_button[pygame.K_DOWN] and self.wall_box[row2][col1] == -1 and self.wall_box[row2][col2] == -1:
             self.y += SPEED
             self.active_move["Forward"] = True
             skip_key = "Forward"
