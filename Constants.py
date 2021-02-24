@@ -3,9 +3,6 @@ import pygame
 SCREEN_HEIGHT = 1024
 SCREEN_WEIGHT = 1024
 
-# BACK_GROUND = "Resources/test.png"
-BACK_GROUND = [pygame.transform.scale(pygame.image.load("Resources/test.png"), (512 * 2, 512 * 2))]
-
 HP = 243
 MANA = 243
 

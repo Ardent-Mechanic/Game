@@ -75,8 +75,6 @@ class World:
 
         self.screen = screen
 
-        self.background = BACK_GROUND[0]
-
         self.running = True
 
         self.weight = SCREEN_WEIGHT // 16
@@ -87,14 +85,11 @@ class World:
 
         self.mob = Mob(self.screen, "snake")
 
-        self.mob_box = [Mob(self.screen, "snake")]
+        self.mob_box = [Mob(self.screen, "fire")]
 
         self.map = Map(1, screen)
 
     def render_models(self, com):
-        # cords = None
-
-        # self.screen.blit(self.background, (0, 0))
 
         self.screen.blit(self.map.background_pic, (0, 0))
 
@@ -203,19 +198,19 @@ class World:
         self.player.filling_moves()
 
         [mob.filling_moves() for mob in self.mob_box]
-        [print(mob.moves) for mob in self.mob_box]
 
         self.map.create_map()
 
         self.player.wall_box = self.map.walls_cords
+
+        for mob in self.mob_box:
+            mob.wall_box = self.map.walls_cords
 
         while self.running:
             pygame.time.Clock().tick(FPS)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
-            # self.map.render_world()
 
             x_player, y_player = player_cords = self.player.get_player_cords()
 

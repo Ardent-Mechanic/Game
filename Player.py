@@ -178,11 +178,6 @@ class Hero:
         col1, col2 = (cords[0]) // 32, (cords[2]) // 32
         row1, row2 = (cords[1]) // 32, (cords[3]) // 32
 
-        if col1 == col2 and row1 == row2:
-            print("Yes")
-            print(col1, row1)
-            print(col2, row2)
-
         if pressed_button[pygame.K_LEFT] and self.chek_collisions(col1, row1, col2, row2):
             self.x -= SPEED
             self.active_move["Left"] = True
